@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@prisma/client": "^4.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "prisma": "^4.13.0"
+  }
+}
