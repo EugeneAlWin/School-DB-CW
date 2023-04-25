@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id       Int       @id @default(autoincrement())
+  login    String    @unique
+  password String
+  role     Roles     @default(PARENT)
+  teacher  Teachers?
+  students Students?
+  Parents  Parents?
+}
+
+model Subject {
+  id      Int       @id @default(autoincrement())
+  title   String
+  teacher Teachers?
+  grades  Grades?
+}
+
+model Grades {
+  id        Int      @id @default(autoincrement())
+  studentId Int      @unique
+  teacherId Int      @unique
+  subjectId Int      @unique
+  value     Int
+  date      DateTime
+  student   Students @relation(fields: [studentId], references: [id])
+  teacher   Teachers @relation(fields: [teacherId], references: [id])
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+}
+
+model Teachers {
+  id          Int     @id @default(autoincrement())
+  userId      Int     @unique
+  subjectId   Int     @unique
+  name        String
+  lastName    String
+  surname     String
+  phone       String
+  email       String
+  description String
+  imgPath     String
+  user        Users   @relation(fields: [userId], references: [id])
+  subject     Subject @relation(fields: [subjectId], references: [id])
+  grade       Grades?
+}
+
+model Students {
+  id       Int      @id @default(autoincrement())
+  userId   Int      @unique
+  class    Int
+  name     String
+  lastName String
+  surname  String
+  imgPath  String
+  user     Users    @relation(fields: [userId], references: [id])
+  Grades   Grades?
+  Parents  Parents?
+}
+
+model Parents {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  studentId Int      @unique
+  name      String
+  lastName  String
+  user      Users    @relation(fields: [userId], references: [id])
+  student   Students @relation(fields: [studentId], references: [id])
+}
+
+enum Roles {
+  ADMIN
+  TEACHER
+  STUDENT
+  PARENT
+}
