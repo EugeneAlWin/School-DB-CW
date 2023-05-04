@@ -1,18 +1,17 @@
-import HomePage from './pages/HomePage.jsx';
 import Navbar from './components/Navbar.jsx';
-import { Route, Router } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
+import SearchPage from './pages/SearchPage.jsx';
 
 export default function App() {
   return (
     <div>
       <Navbar />
       <div>
-        <Router>
-          <Route path='' />
-        </Router>
+        <Routes>
+          <Route path='/' element={<SearchPage />} />
+        </Routes>
       </div>
-      <HomePage />
     </div>
   );
 }
