@@ -15,67 +15,78 @@ model Users {
   login    String    @unique
   password String
   role     Roles     @default(PARENT)
-  teacher  Teachers?
-  students Students?
+  Teachers Teachers?
+  Students Students?
   Parents  Parents?
-}
-
-model Subject {
-  id      Int       @id @default(autoincrement())
-  title   String
-  teacher Teachers?
-  grades  Grades?
-}
-
-model Grades {
-  id        Int      @id @default(autoincrement())
-  studentId Int      @unique
-  teacherId Int      @unique
-  subjectId Int      @unique
-  value     Int
-  date      DateTime
-  student   Students @relation(fields: [studentId], references: [id])
-  teacher   Teachers @relation(fields: [teacherId], references: [id])
-  subject   Subject  @relation(fields: [subjectId], references: [id])
+  Admins   Admins?
 }
 
 model Teachers {
-  id          Int     @id @default(autoincrement())
-  userId      Int     @unique
-  subjectId   Int     @unique
-  name        String
-  lastName    String
-  surname     String
-  phone       String
-  email       String
-  description String
-  imgPath     String
-  user        Users   @relation(fields: [userId], references: [id])
-  subject     Subject @relation(fields: [subjectId], references: [id])
-  grade       Grades?
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @unique
+  subject_id Int
+  name       String
+  last_name  String
+  surname    String
+  phone      String   @default("-")
+  email      String
+  user       Users    @relation(fields: [user_id], references: [id])
+  subject    Subjects @relation(fields: [subject_id], references: [id])
+  Grades     Grades[]
 }
 
 model Students {
-  id       Int      @id @default(autoincrement())
-  userId   Int      @unique
-  class    Int
-  name     String
-  lastName String
-  surname  String
-  imgPath  String
-  user     Users    @relation(fields: [userId], references: [id])
-  Grades   Grades?
-  Parents  Parents?
+  id        Int       @id @default(autoincrement())
+  user_id   Int       @unique
+  name      String
+  last_name String
+  surname   String
+  class     Int
+  phone     String    @default("-")
+  user      Users     @relation(fields: [user_id], references: [id])
+  Grades    Grades[]
+  Parents   Parents[]
 }
 
 model Parents {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @unique
-  studentId Int      @unique
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @unique
+  student_id Int
+  name       String
+  last_name  String
+  surname    String
+  phone      String   @default("-")
+  user       Users    @relation(fields: [user_id], references: [id])
+  student    Students @relation(fields: [student_id], references: [id])
+}
+
+model Admins {
+  id        Int    @id @default(autoincrement())
+  user_id   Int    @unique
   name      String
-  lastName  String
-  user      Users    @relation(fields: [userId], references: [id])
-  student   Students @relation(fields: [studentId], references: [id])
+  last_name String
+  surname   String
+  phone     String @default("-")
+  admin     Users  @relation(fields: [user_id], references: [id])
+}
+
+model Subjects {
+  id       Int        @id @default(autoincrement())
+  title    String     @unique
+  Grades   Grades[]
+  Teachers Teachers[]
+}
+
+model Grades {
+  id         Int      @id @default(autoincrement())
+  value      Int
+  date       DateTime
+  student_id Int
+  teacher_id Int
+  subject_id Int
+  student    Students @relation(fields: [student_id], references: [id])
+  teacher    Teachers @relation(fields: [teacher_id], references: [id])
+  subject    Subjects @relation(fields: [subject_id], references: [id])
 }
 
 enum Roles {
