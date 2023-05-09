@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import TeacherBioPopup from '../components/BioPopups/TeacherBioPopup.jsx';
 import StudentBioPopup from '../components/BioPopups/StudentBioPopup.jsx';
-const ROLES = {
-  TEACHER: 'TEACHER',
-  STUDENT: 'STUDENT',
-};
+import { ROLES } from '../constants/ROLES.js';
+import { useNavigate } from 'react-router-dom';
 export default function SearchPage() {
+  let navigate = useNavigate();
+  if (!localStorage.getItem('USER')) navigate('/login');
   const [users, setUsers] = useState([]);
   const [isTeacherBioOpen, setIsTeacherBioOpen] = useState(false);
   const [isStudentBioOpen, setIsStudentBioOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function SearchPage() {
         <tbody>
           {users.map((item) => (
             <ListItem
-              info={item.teacher ?? item.students}
+              info={item.Teachers ?? item.Students}
               role={item.role}
               key={item.id}
               setIsStudentBioOpen={setIsStudentBioOpen}
@@ -91,7 +91,7 @@ function ListItem({
       }}
     >
       <td className='name'>{info.name}</td>
-      <td className='name'>{info.lastName}</td>
+      <td className='name'>{info.last_name}</td>
       <td className='name'>{info.surname}</td>
       <td className='role'>{role}</td>
     </tr>

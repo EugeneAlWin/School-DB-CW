@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-function LoginPage() {
+export default function LoginPage() {
   let navigate = useNavigate();
   const [status, setStatus] = useState(null);
   const fetchUsers = async () => {
@@ -10,9 +10,21 @@ function LoginPage() {
       );
       if (response.ok) {
         const json = await response.json();
-        console.log(json);
         setStatus(json['login']);
-        navigate('/home');
+        let entity =
+          json.Students ?? json.Parents ?? json.Admins ?? json.Teachers;
+        console.log(entity);
+        localStorage.setItem(
+          'USER',
+          JSON.stringify({
+            login: json['login'],
+            role: json['role'],
+            name: entity.name,
+            last_name: json.last_name,
+            surname: json.surname,
+          })
+        );
+        navigate('/search');
       } else if (response.status === 401) {
         setStatus('Rejected');
       }
@@ -20,7 +32,9 @@ function LoginPage() {
       console.log(error);
     }
   };
-
+  useEffect(() => {
+    localStorage.removeItem('USER');
+  }, []);
   let [login, setLogin] = useState('');
   let [password, setPassword] = useState('');
   return (
@@ -59,9 +73,6 @@ function LoginPage() {
       </div>
       <button onClick={async () => fetchUsers()}>Авторизация</button>
       <div>Status: {status}</div>
-      {/* <div>{data ? <p>Dima : {data.Dima}</p> : <p>Loading...</p>}</div> */}
     </>
   );
 }
-
-export default LoginPage;
