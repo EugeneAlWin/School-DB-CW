@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ROLES } from '../constants/ROLES.js';
 import AdminInputs from '../components/forAdminPage/AdminInputs.jsx';
 import { useNavigate } from 'react-router-dom';
+import { TEACHER_DEFAULT } from '../constants/DEFAULTS_MODELS.js';
 
 export default function AdminPage() {
   let navigate = useNavigate();
@@ -18,19 +19,9 @@ export default function AdminPage() {
     role: ROLES.TEACHER,
     id: '',
   });
-  const [selectedUserInfo, setSelectedUserInfo] = useState({
-    last_name: '',
-    name: '',
-    surname: '',
-    phone: '',
-    email: '',
-    subject_id: '',
-    login: '',
-    password: '',
-    role: ROLES.TEACHER,
-    id: 0,
-  });
+  const [selectedUserInfo, setSelectedUserInfo] = useState(TEACHER_DEFAULT);
   const [userRole, setUserRole] = useState(ROLES.TEACHER);
+  const [userCurrentRole, setUserCurrentRole] = useState(ROLES.TEACHER);
 
   async function fetchAllUsers() {
     try {
@@ -70,6 +61,7 @@ export default function AdminPage() {
                     setSelectedUser(user);
                     setSelectedUserInfo(info);
                     setUserRole(user.role);
+                    setUserCurrentRole(user.role);
                   }}
                 >
                   <td className='name'>{info.name}</td>
@@ -89,6 +81,8 @@ export default function AdminPage() {
         setSelectedUserInfo={setSelectedUserInfo}
         userRole={userRole}
         setUserRole={setUserRole}
+        refreshList={fetchAllUsers}
+        userCurrentRole={userCurrentRole}
       />
     </div>
   );

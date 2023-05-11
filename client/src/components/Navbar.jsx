@@ -1,7 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROLES } from '../constants/ROLES.js';
 
 export default function Navbar() {
+  let navigate = useNavigate();
+  if (!localStorage.getItem('USER')) navigate('/login');
   let user = JSON.parse(localStorage.getItem('USER') ?? {});
   return (
     <div

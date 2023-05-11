@@ -4,6 +4,13 @@ import StudentField from './SelectorFields/StudentField.jsx';
 import ParentField from './SelectorFields/ParentField.jsx';
 import AdminField from './SelectorFields/AdminField.jsx';
 import TeacherField from './SelectorFields/TeacherField.jsx';
+import {
+  ADMINS_DEFAULT,
+  PARENTS_DEFAULT,
+  SELECTED_DEFAULT,
+  STUDENT_DEFAULT,
+  TEACHER_DEFAULT,
+} from '../../constants/DEFAULTS_MODELS.js';
 
 export default function AdminInputs({
   selectedUser,
@@ -12,7 +19,68 @@ export default function AdminInputs({
   setSelectedUserInfo,
   userRole,
   setUserRole,
+  refreshList,
+  userCurrentRole,
 }) {
+  const createUser = async (roleData, userData) => {
+    try {
+      const response = await fetch('http://localhost:3000/admin/addusers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ roleData, userData }),
+      });
+
+      if (!response.ok) {
+        console.log(await response.json().then((e) => e.message));
+        return;
+      }
+      const createdUser = await response.json();
+      console.log('User created:', createdUser);
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
+  };
+  const updateUser = async (roleData, userData, userId) => {
+    try {
+      const response = await fetch('http://localhost:3000/admin/updateusers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ roleData, userData, userId }),
+      });
+
+      if (!response.ok) {
+        console.log(await response.json().then((e) => e.message));
+        return;
+      }
+      const createdUser = await response.json();
+      console.log('User created:', createdUser);
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
+  };
+  const deleteUser = async (userId, role) => {
+    try {
+      const response = await fetch('http://localhost:3000/admin/deleteusers', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, role }),
+      });
+
+      if (!response.ok) {
+        console.log(await response.json().then((e) => e.message));
+        return;
+      }
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
+  };
+
   return (
     <div className='inputs'>
       <div className='fields'>
@@ -21,6 +89,7 @@ export default function AdminInputs({
             type='text'
             name=''
             id='login'
+            placeholder='login'
             value={selectedUser.login}
             onChange={(e) =>
               setSelectedUser({
@@ -33,6 +102,7 @@ export default function AdminInputs({
             type='password'
             name=''
             id='password'
+            placeholder='password'
             onChange={(e) =>
               setSelectedUser({
                 ...selectedUser,
@@ -47,6 +117,7 @@ export default function AdminInputs({
             type='number'
             id='id'
             disabled
+            placeholder='id'
             value={selectedUser.id}
             onChange={(e) =>
               setSelectedUser({
@@ -60,11 +131,21 @@ export default function AdminInputs({
             name='list_of_roles'
             id='list_of_roles'
             onChange={(e) => {
-              setUserRole(e.target.value),
+              let role = e.target.value;
+              setUserRole(role),
                 setSelectedUser({
                   ...selectedUser,
-                  role: e.target.value,
+                  role: role,
                 });
+              let info =
+                role === ROLES.ADMIN
+                  ? ADMINS_DEFAULT
+                  : role === ROLES.PARENT
+                  ? PARENTS_DEFAULT
+                  : role === ROLES.TEACHER
+                  ? TEACHER_DEFAULT
+                  : STUDENT_DEFAULT;
+              setSelectedUserInfo(info);
             }}
           >
             {Object.keys(ROLES).map((i) => (
@@ -99,6 +180,80 @@ export default function AdminInputs({
           />
         )}
       </div>
+      <br />
+      <div id='crud_buttons'>
+        <button
+          className='crud_button'
+          onClick={async () => {
+            let roleData = {
+              ...selectedUserInfo,
+            };
+            if (roleData.class) {
+              roleData.class = +roleData.class;
+            }
+            delete roleData.id;
+            delete roleData.user_id;
+
+            console.log(roleData);
+            await createUser(roleData, {
+              login: selectedUser.login,
+              password: selectedUser.password,
+              role: selectedUser.role,
+            });
+            await refreshList();
+          }}
+        >
+          Добавить
+        </button>
+        <button
+          className='crud_button'
+          disabled={userRole !== userCurrentRole && selectedUser.id != 0}
+          onClick={async () => {
+            let roleData = {
+              ...selectedUserInfo,
+            };
+            console.log(roleData);
+            if (roleData.class) {
+              roleData.class = +roleData.class;
+            }
+            delete roleData.id;
+            delete roleData.user_id;
+
+            await updateUser(
+              roleData,
+              {
+                login: selectedUser.login,
+                password: selectedUser.password,
+                role: selectedUser.role,
+              },
+              selectedUser.id
+            );
+            await refreshList();
+          }}
+        >
+          Обновить
+        </button>
+        <button
+          className='crud_button'
+          onClick={async () => {
+            if (!selectedUserInfo.id) return;
+            await deleteUser(selectedUser.id, selectedUser.role);
+            await refreshList();
+          }}
+        >
+          Удалить
+        </button>
+        <button
+          className='clear_button'
+          onClick={() => {
+            setUserRole(ROLES.TEACHER);
+            setSelectedUserInfo(TEACHER_DEFAULT);
+            setSelectedUser(SELECTED_DEFAULT);
+          }}
+        >
+          Очистить
+        </button>
+      </div>
     </div>
   );
 }
@@ -110,4 +265,6 @@ AdminInputs.propTypes = {
   setSelectedUserInfo: PropTypes.func,
   userRole: PropTypes.string,
   setUserRole: PropTypes.func,
+  refreshList: PropTypes.func,
+  userCurrentRole: PropTypes.string,
 };

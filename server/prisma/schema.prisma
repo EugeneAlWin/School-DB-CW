@@ -30,8 +30,8 @@ model Teachers {
   surname    String
   phone      String   @default("-")
   email      String
-  user       Users    @relation(fields: [user_id], references: [id])
-  subject    Subjects @relation(fields: [subject_id], references: [id])
+  user       Users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  subject    Subjects @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Grades     Grades[]
 }
 
@@ -43,7 +43,7 @@ model Students {
   surname   String
   class     Int
   phone     String    @default("-")
-  user      Users     @relation(fields: [user_id], references: [id])
+  user      Users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Grades    Grades[]
   Parents   Parents[]
 }
@@ -56,8 +56,8 @@ model Parents {
   last_name  String
   surname    String
   phone      String   @default("-")
-  user       Users    @relation(fields: [user_id], references: [id])
-  student    Students @relation(fields: [student_id], references: [id])
+  user       Users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  student    Students @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Admins {
@@ -67,7 +67,7 @@ model Admins {
   last_name String
   surname   String
   phone     String @default("-")
-  admin     Users  @relation(fields: [user_id], references: [id])
+  admin     Users  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Subjects {
@@ -84,9 +84,9 @@ model Grades {
   student_id Int
   teacher_id Int
   subject_id Int
-  student    Students @relation(fields: [student_id], references: [id])
-  teacher    Teachers @relation(fields: [teacher_id], references: [id])
-  subject    Subjects @relation(fields: [subject_id], references: [id])
+  student    Students @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teacher    Teachers @relation(fields: [teacher_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  subject    Subjects @relation(fields: [subject_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum Roles {

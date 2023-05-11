@@ -13,7 +13,6 @@ export default function StudentBioPopup({ info, closeCallback }) {
     >
       <div id={ss.modal}>
         <div style={{ display: 'flex' }}>
-          <img src={''} alt='photo' style={{ width: '50%' }} />
           <div style={{ textAlign: 'left' }}>
             <h3 className={ss.object_name}>
               {info.surname} {info.name} {info.lastName}

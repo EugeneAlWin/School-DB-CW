@@ -14,6 +14,7 @@ export default function App() {
       {location.pathname !== '/login' && <Navbar />}
       <div>
         <Routes>
+          <Route path='*' element={<SearchPage />}></Route>
           <Route path='/search' element={<SearchPage />} />
           <Route path='/admin' element={<AdminPage />} />
           <Route path='/journal' element={<JournalPage />} />

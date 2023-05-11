@@ -40,14 +40,6 @@ export default function ParentField({ userInfo, setUserInfo }) {
           }}
         />
       </div>
-      {/* <input
-        type='number'
-        placeholder='student_id'
-        value={userInfo.last_name}
-        onChange={(e) => {
-          setUserInfo({ ...userInfo, last_name: e.target.value });
-        }}
-      /> */}
     </div>
   );
 }

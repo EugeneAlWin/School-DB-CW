@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-export default function ProfileMini({ imgPath, name, lastName, surname }) {
+export default function ProfileMini({ name, lastName, surname }) {
   return (
     <div>
       <div
@@ -10,7 +10,6 @@ export default function ProfileMini({ imgPath, name, lastName, surname }) {
           flexDirection: 'column',
         }}
       >
-        <img src={imgPath} alt={imgPath} style={{ borderRadius: '50%' }} />
         <h3>
           {lastName} {name} {surname}
         </h3>

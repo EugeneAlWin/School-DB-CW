@@ -53,7 +53,7 @@ export default function TeacherField({ userInfo, setUserInfo }) {
           placeholder='subject_id'
           value={userInfo.subject_id}
           onChange={(e) =>
-            setUserInfo({ ...userInfo, subject_id: e.target.value })
+            setUserInfo({ ...userInfo, subject_id: +e.target.value })
           }
         />
       </div>
